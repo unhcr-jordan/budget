@@ -51,8 +51,9 @@
     <div class="container" id="dashboard">
                 <h1><a  href="http://data.unhcr.org/jordan"><img src="images/coordination.png" style="height: 48px; width: 48px"></a>
         <strong>Refugee Home Visit 2014 | Budget Visualisation </strong></h1>
-        <div class="col-xs-12">Explore <a href="XXX" target="_blank">2015 Interagency Response</a> Refugee Budget Visualisation. <strong>All charts are based on USD values appealed. Click on any of the graphs below to filter and slice the data.</strong> <br>
-            More info on Jordan <a href="http://data.unhcr.org/syrianrefugees/country.php?id=107" target="_blank">here</a>.</div>
+        <div class="col-xs-12">Explore <a href="XXX" target="_blank">Refugee Budget Visualisation</a>. 
+        <strong>Click on any of the graphs below to filter and slice the data.</strong> <br>
+            More info on Jordan <a href="http://data.unhcr.org/jordan" target="_blank">here</a>.</div>
         <div class="socialmedia" data-step="13" data-intro="Share!!" data-position="left">
             <table>
               <tbody><tr>
@@ -107,15 +108,15 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="row">
-                    <div id="costavg" class="col-xs-12 col-md-8 dc-chart" data-step="3" data-intro="Click on this row chart to filter by category." data-position="right">
-                        <h5><strong>Cost histogram</strong></h5>
+                    <div id="incavg" class="col-xs-12 col-md-8 dc-chart" data-step="3" data-intro="Click on this row chart to filter by category." data-position="right">
+                        <h2><strong>Income histogram</strong></h2>
                     </div>
                </div>
             </div>
             <div class="col-md-6">
                 <div class="row">
-                    <div id="incavg" class="col-xs-12 col-md-8 dc-chart" data-step="3" data-intro="Click on this row chart to filter by category." data-position="right">
-                        <h5><strong>Income histogram</strong></h5>
+                    <div id="costavg" class="col-xs-12 col-md-8 dc-chart" data-step="3" data-intro="Click on this row chart to filter by category." data-position="right">
+                        <h2><strong>Expenses histogram</strong></h2>
                     </div>
                </div>
             </div>
@@ -261,9 +262,9 @@
         /*
        // "SexCode","IndividualAge","CaseSize","Recommended_for_cash_Assessment","Decision_for_cash_Assistance","gid","Governoratename",
        // "IndividualAge1","CaseSize1",
-        "totalincome","totalcost",
-        "totalincome1cl","totalincomecl",
-        "totalcost1cl","totalcostcl"
+        
+       
+       
         */
 
         d3.csv("data/dataviz.csv", function(csv_data){
@@ -363,18 +364,20 @@
             var otherexpcount = cf.otherexp.group().reduceCount(function(d) { return d.OtherExpenses1cl; });
 
 
-
+      // "totalcost","totalcost1cl","totalcostcl"
             cf.costcl = cf.dimension(function(d) { return d.totalcost1cl; });
             var costcl = cf.costcl.group();
             var costclcount = cf.otherexp.group().reduceCount(function(d) { return d.totalcost1cl; });
 
-
+      // "totalincome","totalincome1cl","totalincomecl",
             cf.inccl = cf.dimension(function(d) { return d.totalincome1cl; });
             var inccl = cf.inccl.group();
             var incclcount = cf.inccl.group().reduceCount(function(d) { return d.totalincome1cl; });
+            
 
-            // Implement bookmarking chart filters category --> Thanks to https://github.com/franckalbinet
-            // Serializing filters values in URL
+
+    // Implement bookmarking chart filters category --> Thanks to https://github.com/franckalbinet
+    // Serializing filters values in URL
             function getFiltersValues() {
                 var filters = [
                     { name: 'gend', value: gender_chart.filters()},
@@ -459,10 +462,16 @@
                   .offset([-10, 0])
                   .html(function (d) { return "<span style='color: #f0027f'>" + d.data.key + "</span> : " + numberFormat(d.y) + " USD";});
 
-
+ /*
             dc.dataCount("#count-info")
-                .dimension(cf)
+                .dimension(cf)                
+                .formatNumber(d3.format(",f"))
                 .group(all);
+                
+           dc.numberDisplay("#count-info")
+                .valueAccessor(function(d){return +d})
+                .group(byIndividualGroup);
+                */
 
             gender_chart.width(100).height(100)
                 .dimension(cf.gender)
@@ -505,170 +514,6 @@
                 .on("filtered", getFiltersValues)
                 .xAxis().ticks(4).tickFormat(d3.format("s"));    
                 
-
-               //Map
-                //Import hexagrid in topo json format
-                d3.json("data/hexagridtopo.json", function(json) {
-
-                // extend admin level 1 map geojson features with values, paired by location code that appears on both the map and the dataset
-                    for (var i = 0; i < Location_json.length; i++) {
-                        var dist_Location = Location_json[i].A1Code;
-                        var dist_Value = parseFloat(Location_json[i].Value);
-
-                        for (var j = 0; j < json.features.length; j++) {
-                            var jsonGov = json.features[j].properties.A1Code;
-
-                            if (dist_Location == jsonGov) {
-                                json.features[j].properties.Value = dist_Value;
-                                break;
-
-                            }
-                        }
-                    }
-
-                    var geojson;
-
-                    // declare leaflet map with an empty tile layer
-                    var map = L.map('map', { zoomControl: false }).setView([33.15, 43.8], 6);
-                    L.tileLayer('', {
-                        attribution: "This map does not imply official endorsement or acceptance by the United Nations"
-                    })
-                            .addTo(map);
-
-                    // disable map user interaction including dragging, zoom, clicking, keyboard, etc.
-                    map.dragging.disable();
-                    map.touchZoom.disable();
-                    map.doubleClickZoom.disable();
-                    map.scrollWheelZoom.disable();
-                    map.boxZoom.disable();
-                    map.keyboard.disable();
-
-                    // control that shows Governorate info on hover
-                    var info = L.control();
-
-                    info.onAdd = function (map) {
-                        this._div = L.DomUtil.create('div', 'info');
-                        this.update();
-                        return this._div;
-                    };
-
-                    // declare what to show in information control
-                    info.update = function (props) {
-                        this._div.innerHTML = '<h4>Released Value</h4>' +  (props ?
-                                '<b>' + props.A1NameEn + '</b><br />' + numberFormat(props.Value = props.Value || 0) + ' USD'
-                                : 'Hover over a Governorate');
-                    };
-
-                    info.addTo(map);
-
-
-                    // get color depending on released value
-                    function getColor(d) {
-                        return          d > 5000000 ?   '#084594' :
-                                        d > 2500000 ?   '#2171b5' :
-                                        d > 1000000 ?   '#4292c6' :
-                                        d > 500000  ?   '#6baed6' :
-                                        d > 250000  ?   '#9ecae1' :
-                                        d > 100000  ?   '#c6dbef' :
-                                    //  d > 50000   ?   '#deebf7' :
-                                                        '#f7fbff';
-                    }
-
-                    function style(feature) {
-                        return {
-                            weight: 2,
-                            opacity: 1,
-                            color: 'white',
-                            dashArray: '3',
-                            fillOpacity: 0.7,
-                            fillColor: getColor(feature.properties.Value)
-                        };
-                    }
-                    // highlight selected governorate
-                    function highlightFeature(e) {
-                        var layer = e.target;
-
-                        layer.setStyle({
-                            weight: 5,
-                            color: '#666',
-                            dashArray: '',
-                            fillOpacity: 0.7
-                        });
-
-                        if (!L.Browser.ie && !L.Browser.opera) {
-                            layer.bringToFront();
-                        }
-
-                        info.update(layer.feature.properties);
-                    }
-
-                    // reset highlight back to normal
-                    function resetHighlight(e) {
-                        geojson.resetStyle(e.target);
-                        info.update();
-                    }
-
-                    function onEachFeature(feature, layer) {
-                        layer.on({
-                            mouseover: highlightFeature,
-                            mouseout: resetHighlight
-                        });
-                    }
-
-                    // add style to geojson feature and add to map
-                    geojson = L.geoJson(json, {
-                        style: style,
-                        onEachFeature: onEachFeature
-                    }).addTo(map);
-
-                // legend control (not used)
-                    var legend = L.control({position: 'bottomleft'});
-
-                    legend.onAdd = function (map) {
-
-                        var div = L.DomUtil.create('div', 'info legend'),
-                                grades = [0, 50000, 100000, 250000, 500000, 1000000, 2000000, 2500000],
-                                labels = [],
-                                from, to;
-
-                        for (var i = 0; i < grades.length; i++) {
-                            from = grades[i];
-                            to = grades[i + 1];
-
-                            labels.push(
-                                            '<i style="background:' + getColor(from + 1) + '"></i> ' +
-                                            from + (to ? '&ndash;' + to : '+'));
-                        }
-
-                        div.innerHTML = labels.join('<br>');
-                        return div;
-                    };
-                    //legend.addTo(map);
-                });
-  /*
-            map_chart.width(600).height(400)
-                .dimension(facilities)
-                .group(facilitiesGroup)
-                .center([42.69,25.42])
-                .zoom(7)
-                .geojson(geojson)
-                .colors(['#fff7f3', '#fde0dd', '#fcc5c0', '#fa9fb5', '#f768a1', '#dd3497', '#ae017e', '#7a0177', '#49006a'])
-                .colorDomain(function() {
-                  return [dc.utils.groupMin(this.group(), this.valueAccessor()),
-                   dc.utils.groupMax(this.group(), this.valueAccessor())];
-                })
-                .colorAccessor(function(d,i) {
-                    return d.value;
-                })
-                .featureKeyAccessor(function(feature) {
-                   return feature.properties.code;
-                })
-                  .renderPopup(true)
-                  .popup(function(d,feature) {
-                    return feature.properties.nameEn+" : "+d.value;
-                  });  
-*/
-
 
             costavg_chart.width(480).height(180)
                 .dimension(cf.costcl)
@@ -870,22 +715,22 @@
 
 
 
-                    $('#reset').on('click', function (){
-                      dc.filterAll();
-                      dc.redrawAll();
-                      return false;
-                    })
-                    //dc.redrawAll();
-                    dc.renderAll();
+            $('#reset').on('click', function (){
+              dc.filterAll();
+              dc.redrawAll();
+              return false;
+            })
+            //dc.redrawAll();
+            dc.renderAll();
 
-                    /* Customised infobox */
-                    d3.selectAll("g.row").call(rowTip);
-                    d3.selectAll("g.row").on('mouseover', rowTip.show)
-                        .on('mouseout', rowTip.hide);
+            /* Customised infobox */
+            d3.selectAll("g.row").call(rowTip);
+            d3.selectAll("g.row").on('mouseover', rowTip.show)
+                .on('mouseout', rowTip.hide);
 
-                    d3.selectAll(".pie-slice").call(pieTip);
-                    d3.selectAll(".pie-slice").on('mouseover', pieTip.show)
-                        .on('mouseout', pieTip.hide);
+            d3.selectAll(".pie-slice").call(pieTip);
+            d3.selectAll(".pie-slice").on('mouseover', pieTip.show)
+                .on('mouseout', pieTip.hide);
 
 
             $('#loading').hide();
