@@ -14,20 +14,40 @@
     <!-- Bootstrap -->
     <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="css/dc.css">
+    
+	<link rel="stylesheet" type="text/css" href="css/leaflet.css" />
     <link rel="stylesheet" type="text/css" href="css/dashboard.css">
+    
     <!-- Add IntroJs styles and JS -->
     <link rel="stylesheet" type="text/css" href="css/introjs.css">
+    
     <script type="text/javascript" src="js/intro.js"></script>
     <script src="js/jquery.js"></script>
-    
-    <script src="js/vendor/jquery.js"></script>
+
 
     <!-- map the data to the GeoJSON object -->
     <script src="js/data-jo.js"></script>
     <link href="http://www.unhcr.org/favicon.ico" rel="icon" type="image/x-icon">
   <style>@-webkit-keyframes popaqisqezremkggezpgzrwftdammlcebrfuyv {50% {-webkit-transform:scale(1.2);}100% {-webkit-transform:scale(1);}}@keyframes popaqisqezremkggezpgzrwftdammlcebrfuyv {50% {-webkit-transform:scale(1.2);transform:scale(1.2);}100% {-webkit-transform:scale(1);transform:scale(1);}}#aqisqezremkggezpgzrwftdammlcebrfuyv{padding:0;margin:0;font:13px Arial,Helvetica;text-transform:none;font-size: 100%;vertical-align:baseline;line-height:normal;color:#fff;position:static;border:solid 2px #fff !important;color:#fff !important;display:block !important;height:auto !important;margin:0 !important;opacity:0.9 !important;padding:7px 10px !important;position:fixed !important;visibility:visible !important;width:auto !important;z-index:2147483647 !important;-moz-border-radius:5px !important;border-radius:5px !important;-moz-box-shadow:0px 0px 20px #000 !important;box-shadow:0px 0px 20px #000 !important;}.aqisqezremkggezpgzrwftdammlcebrfuyv-blocked{padding:0;margin:0;font:13px Arial,Helvetica;text-transform:none;font-size: 100%;vertical-align:baseline;line-height:normal;color:#fff;position:static;color:#AAA !important;display:inline !important;text-decoration:line-through !important;}#aqisqezremkggezpgzrwftdammlcebrfuyv br{display:block !important;padding:0;margin:0;font:13px Arial,Helvetica;text-transform:none;font-size: 100%;vertical-align:baseline;line-height:normal;color:#fff;position:static;}#aqisqezremkggezpgzrwftdammlcebrfuyv span{background:transparent !important;padding:0;margin:0;font:13px Arial,Helvetica;text-transform:none;font-size: 100%;vertical-align:baseline;line-height:normal;color:#fff;position:static;}#aqisqezremkggezpgzrwftdammlcebrfuyv div{padding:0;margin:0;font:13px Arial,Helvetica;text-transform:none;font-size: 100%;vertical-align:baseline;line-height:normal;color:#fff;position:static;border:0 !important;margin:0 !important;padding:0 !important;width:auto !important;letter-spacing:normal !important;font:13px Arial,Helvetica !important;text-align:left !important;text-shadow:none !important;text-transform:none !important;word-spacing:normal !important;}#aqisqezremkggezpgzrwftdammlcebrfuyv a{padding:0;margin:0;font:13px Arial,Helvetica;text-transform:none;font-size: 100%;vertical-align:baseline;line-height:normal;color:#fff;position:static;font-weight:normal !important;background:none !important;text-decoration:underline !important;color:#fff !important;}a#aqisqezremkggezpgzrwftdammlcebrfuyv-gear{padding:0;margin:0;font:13px Arial,Helvetica;text-transform:none;font-size: 100%;vertical-align:baseline;line-height:normal;color:#fff;position:static;text-decoration:none !important;position:absolute !important;display:none !important;font-size:20px !important;width:20px !important;height:20px !important;line-height:20px !important;text-align:center !important;background-color:rgba(255,255,255,.8) !important;background-image:url(resource://firefox-at-ghostery-dot-com/ghostery/data/images/gear.svg) !important;background-size:16px 16px !important;background-position:center center !important;background-repeat:no-repeat !important;text-decoration:none !important;}a#aqisqezremkggezpgzrwftdammlcebrfuyv-gear:hover{-webkit-animation-name:popaqisqezremkggezpgzrwftdammlcebrfuyv !important;animation-name:popaqisqezremkggezpgzrwftdammlcebrfuyv !important;-webkit-animation-duration:0.3s !important;animation-duration:0.3s !important;}#aqisqezremkggezpgzrwftdammlcebrfuyv:hover #aqisqezremkggezpgzrwftdammlcebrfuyv-gear{text-decoration:none !important;display:inline-block !important;}#aqisqezremkggezpgzrwftdammlcebrfuyv hr{visibility:hidden !important;padding:0;margin:0;font:13px Arial,Helvetica;text-transform:none;font-size: 100%;vertical-align:baseline;line-height:normal;color:#fff;position:static;height:1em;}@media print{#aqisqezremkggezpgzrwftdammlcebrfuyv{display:none !important;}}</style></head>
-
+  <style>
+    #holder {
+      width:850px;
+      margin:20px auto;
+    }
+    #holder>div {
+      padding:30px 0;
+      clear:both;
+    }
+    .map {
+      width:600px;
+      height:400px;
+    }
+  </style>
   <body>
+      
+       <!-- Loading screen -->
+    <div class="loader"></div>
+      
     <div class="container" id="dashboard">
                 <h1><a  href="http://data.unhcr.org/jordan"><img src="images/coordination.png" style="height: 48px; width: 48px"></a>
         <strong>Refugee Home Visit 2014 | Budget Visualisation </strong></h1>
@@ -198,27 +218,16 @@
     <script type="text/javascript" src="js/dc.js"></script>
     <script type="text/javascript" src="js/d3.js"></script>
     <script type="text/javascript" src="js/underscore-min.js"></script>
-    
-    
-    <script type="text/javascript" src='https://api.tiles.mapbox.com/mapbox.js/v1.6.1/mapbox.js'></script>
-    <script type="text/javascript" src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v0.0.2/Leaflet.fullscreen.min.js'></script>
-    <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
-    <script type="text/javascript" src="http://d3js.org/d3.hexbin.v0.min.js"></script>
-    <script type="text/javascript" src="http://d3js.org/queue.v1.min.js"></script>
-    <script type="text/javascript" src="http://d3js.org/topojson.v1.min.js"></script>
-    <script type="text/javascript" src="js/d3/crossfilter.js"></script>
-    <script type="text/javascript" src="js/d3/nbTimePlot.js"></script>
-    <script type="text/javascript" src="js/d3/valueTimePlot.js"></script>
-    <script type="text/javascript" src="js/d3/histogram.js"></script>
-    <script type="text/javascript" src="js/d3/histogramFocus.js"></script>
-    <script type="text/javascript" src="js/d3/dataList.js"></script>
-    <script type="text/javascript" src="js/d3/mapLegend.js"></script>
-    <script type="text/javascript" src="js/d3/hexbinAggregate.js"></script>
-    <script type="text/javascript" src="js/d3/timeLine.js"></script>
-    <script type="text/javascript" src="js/d3/distanceCircles.js"></script>
+    <script type="text/javascript" src="js/leaflet.js"></script>
+    <script type="text/javascript" src="js/dc.leaflet.js"></script>
+    <script type="text/javascript" src="js/topojson.v1.min.js"></script>
+
 
  <script>
-
+        // loading screen code
+        $(window).load(function() {
+        $(".loader").fadeOut("slow");
+        });
 
         var gender_chart = dc.pieChart("#gend");
         var age_chart = dc.pieChart("#age");
@@ -245,6 +254,9 @@
         var treatment_chart = dc.barChart("#treatmnetc");
         var education_chart = dc.barChart("#educationc");
         var otherexp_chart = dc.barChart("#otherexpc");
+        
+        //mapchart
+       // var map_chart = dc.leafletChoroplethChart("#maphex .map",groupname);
 
         /*
        // "SexCode","IndividualAge","CaseSize","Recommended_for_cash_Assessment","Decision_for_cash_Assistance","gid","Governoratename",
@@ -492,6 +504,171 @@
                 .colorAccessor(function(d, i){return 1;})
                 .on("filtered", getFiltersValues)
                 .xAxis().ticks(4).tickFormat(d3.format("s"));    
+                
+
+               //Map
+                //Import hexagrid in topo json format
+                d3.json("data/hexagridtopo.json", function(json) {
+
+                // extend admin level 1 map geojson features with values, paired by location code that appears on both the map and the dataset
+                    for (var i = 0; i < Location_json.length; i++) {
+                        var dist_Location = Location_json[i].A1Code;
+                        var dist_Value = parseFloat(Location_json[i].Value);
+
+                        for (var j = 0; j < json.features.length; j++) {
+                            var jsonGov = json.features[j].properties.A1Code;
+
+                            if (dist_Location == jsonGov) {
+                                json.features[j].properties.Value = dist_Value;
+                                break;
+
+                            }
+                        }
+                    }
+
+                    var geojson;
+
+                    // declare leaflet map with an empty tile layer
+                    var map = L.map('map', { zoomControl: false }).setView([33.15, 43.8], 6);
+                    L.tileLayer('', {
+                        attribution: "This map does not imply official endorsement or acceptance by the United Nations"
+                    })
+                            .addTo(map);
+
+                    // disable map user interaction including dragging, zoom, clicking, keyboard, etc.
+                    map.dragging.disable();
+                    map.touchZoom.disable();
+                    map.doubleClickZoom.disable();
+                    map.scrollWheelZoom.disable();
+                    map.boxZoom.disable();
+                    map.keyboard.disable();
+
+                    // control that shows Governorate info on hover
+                    var info = L.control();
+
+                    info.onAdd = function (map) {
+                        this._div = L.DomUtil.create('div', 'info');
+                        this.update();
+                        return this._div;
+                    };
+
+                    // declare what to show in information control
+                    info.update = function (props) {
+                        this._div.innerHTML = '<h4>Released Value</h4>' +  (props ?
+                                '<b>' + props.A1NameEn + '</b><br />' + numberFormat(props.Value = props.Value || 0) + ' USD'
+                                : 'Hover over a Governorate');
+                    };
+
+                    info.addTo(map);
+
+
+                    // get color depending on released value
+                    function getColor(d) {
+                        return          d > 5000000 ?   '#084594' :
+                                        d > 2500000 ?   '#2171b5' :
+                                        d > 1000000 ?   '#4292c6' :
+                                        d > 500000  ?   '#6baed6' :
+                                        d > 250000  ?   '#9ecae1' :
+                                        d > 100000  ?   '#c6dbef' :
+                                    //  d > 50000   ?   '#deebf7' :
+                                                        '#f7fbff';
+                    }
+
+                    function style(feature) {
+                        return {
+                            weight: 2,
+                            opacity: 1,
+                            color: 'white',
+                            dashArray: '3',
+                            fillOpacity: 0.7,
+                            fillColor: getColor(feature.properties.Value)
+                        };
+                    }
+                    // highlight selected governorate
+                    function highlightFeature(e) {
+                        var layer = e.target;
+
+                        layer.setStyle({
+                            weight: 5,
+                            color: '#666',
+                            dashArray: '',
+                            fillOpacity: 0.7
+                        });
+
+                        if (!L.Browser.ie && !L.Browser.opera) {
+                            layer.bringToFront();
+                        }
+
+                        info.update(layer.feature.properties);
+                    }
+
+                    // reset highlight back to normal
+                    function resetHighlight(e) {
+                        geojson.resetStyle(e.target);
+                        info.update();
+                    }
+
+                    function onEachFeature(feature, layer) {
+                        layer.on({
+                            mouseover: highlightFeature,
+                            mouseout: resetHighlight
+                        });
+                    }
+
+                    // add style to geojson feature and add to map
+                    geojson = L.geoJson(json, {
+                        style: style,
+                        onEachFeature: onEachFeature
+                    }).addTo(map);
+
+                // legend control (not used)
+                    var legend = L.control({position: 'bottomleft'});
+
+                    legend.onAdd = function (map) {
+
+                        var div = L.DomUtil.create('div', 'info legend'),
+                                grades = [0, 50000, 100000, 250000, 500000, 1000000, 2000000, 2500000],
+                                labels = [],
+                                from, to;
+
+                        for (var i = 0; i < grades.length; i++) {
+                            from = grades[i];
+                            to = grades[i + 1];
+
+                            labels.push(
+                                            '<i style="background:' + getColor(from + 1) + '"></i> ' +
+                                            from + (to ? '&ndash;' + to : '+'));
+                        }
+
+                        div.innerHTML = labels.join('<br>');
+                        return div;
+                    };
+                    //legend.addTo(map);
+                });
+  /*
+            map_chart.width(600).height(400)
+                .dimension(facilities)
+                .group(facilitiesGroup)
+                .center([42.69,25.42])
+                .zoom(7)
+                .geojson(geojson)
+                .colors(['#fff7f3', '#fde0dd', '#fcc5c0', '#fa9fb5', '#f768a1', '#dd3497', '#ae017e', '#7a0177', '#49006a'])
+                .colorDomain(function() {
+                  return [dc.utils.groupMin(this.group(), this.valueAccessor()),
+                   dc.utils.groupMax(this.group(), this.valueAccessor())];
+                })
+                .colorAccessor(function(d,i) {
+                    return d.value;
+                })
+                .featureKeyAccessor(function(feature) {
+                   return feature.properties.code;
+                })
+                  .renderPopup(true)
+                  .popup(function(d,feature) {
+                    return feature.properties.nameEn+" : "+d.value;
+                  });  
+*/
+
 
             costavg_chart.width(480).height(180)
                 .dimension(cf.costcl)
