@@ -218,7 +218,7 @@
     <script type="text/javascript" src="js/crossfilter.js"></script>
     <script type="text/javascript" src="js/dc.js"></script>
     <script type="text/javascript" src="js/d3.js"></script>
-    <script type="text/javascript" src="js/underscore-min.js"></script>
+ <!--   <script type="text/javascript" src="js/underscore-min.js"></script>  -->
     <script type="text/javascript" src="js/leaflet.js"></script>
     <script type="text/javascript" src="js/dc.leaflet.js"></script>
     <script type="text/javascript" src="js/topojson.v1.min.js"></script>
@@ -267,7 +267,8 @@
        
         */
 
-        d3.csv("data/dataviz.csv", function(csv_data){
+    d3.csv("data/dataviz.csv", 
+        function(csv_data){
 
             var numberFormat = d3.format(",f");
 
@@ -444,23 +445,13 @@
                 }
             }
 
-            // tooltips for row chart
-            var rowTip = d3.tip()
-                  .attr('class', 'd3-tip')
-                  .offset([-10, 0])
-                  .html(function (d) { return "<span style='color: #f0027f'>" +  d.key + "</span> : "  + numberFormat(d.value) + " USD"; });
-
-            // tooltips for pie chart
-            var pieTip = d3.tip()
-                  .attr('class', 'd3-tip')
-                  .offset([-10, 0])
-                  .html(function (d) { return "<span style='color: #f0027f'>" +  d.data.key + "</span> : "  + numberFormat(d.value) + " Ind"; });
-
-            // tooltips for bar chart
-            var barTip = d3.tip()
-                  .attr('class', 'd3-tip')
-                  .offset([-10, 0])
-                  .html(function (d) { return "<span style='color: #f0027f'>" + d.data.key + "</span> : " + numberFormat(d.y) + " USD";});
+            // tooltips for charts
+            var rowTip = d3.tip().attr('class', 'd3-tip').offset([-10, 0])
+                  .html(function (d) { return "<span style='color: #f0027f'>" +  d.key + "</span> : "  + numberFormat(d.value) + " Household"; });
+            var pieTip = d3.tip().attr('class', 'd3-tip').offset([-10, 0])
+                  .html(function (d) { return "<span style='color: #f0027f'>" +  d.data.key + "</span> : "  + numberFormat(d.value) + " Household"; });
+            var barTip = d3.tip().attr('class', 'd3-tip').offset([-10, 0])
+                  .html(function (d) { return "<span style='color: #f0027f'>" + d.data.key + "</span> : " + numberFormat(d.y) + " Household";});
 
  /*
             dc.dataCount("#count-info")
@@ -736,7 +727,9 @@
             $('#loading').hide();
             $('#dashboard').show();
 
-        });
+        }
+        
+    );
     </script>
     <script src="js/bootstrap.js"></script>
 
