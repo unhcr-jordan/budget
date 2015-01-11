@@ -473,7 +473,7 @@
       // "totalcost","totalcost1cl","totalcostcl"
             cf.costcl = cf.dimension(function(d) { return d.totalcost1cl; });
             var costcl = cf.costcl.group();
-            var costclcount = cf.otherexp.group().reduceCount(function(d) { return d.totalcost1cl; });
+            var costclcount = cf.costcl.group().reduceCount(function(d) { return d.totalcost1cl; });
 
             costavg_chart.width(480).height(180)
                 .dimension(cf.costcl)
@@ -482,7 +482,7 @@
                 .transitionDuration(500)
                 .centerBar(true)
                 .gap(5)
-               // .filter([1, 8])
+                .filter([1, 8])
                 .x(d3.scale.linear().domain([1, 8]))
                 .elasticY(true)
                 .on("filtered", getFiltersValues)
