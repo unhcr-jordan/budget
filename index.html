@@ -77,7 +77,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <div class="row">
                     <div id="gend" class="col-xs-12 col-md-8 dc-chart" data-step="1" data-intro="Click on this row chart to filter by category." data-position="right">
                         <h5><strong>Gender of head of Family</strong></h5>
@@ -87,7 +87,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <div class="row">
                     <div id="size" class="col-xs-12 col-md-8 dc-chart" data-step="3" data-intro="Click on this row chart to filter by category." data-position="right">
                         <h5><strong>Size of the Family</strong></h5>
@@ -97,7 +97,7 @@
                     </div>
                </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-6">
                 <div class="row">
                     <div id="gov" class="col-xs-12 col-md-8 dc-chart" data-step="3" data-intro="Click on this row chart to filter by category." data-position="right">
                         <h5><strong>Governorate</strong></h5>
@@ -338,14 +338,25 @@
             // Start defining the cube dimensions!
 
             var all = cf.groupAll();
+                dc.dataCount("#count-info")
+                    .formatNumber(d3.format(",f"))
+                    .dimension(cf)
+                    .group(all);
 
+            var byFamily = cf.dimension(function(d) { return d.CaseSize; });
+            var byFamilyGroup = byFamily.groupAll().reduceSum(function (d) { return d.CaseSize; });
 
-         // "SexCode",
+               dc.numberDisplay("#totalind")
+                    .formatNumber(d3.format(",f"))
+                    .valueAccessor(function(d){return +d})
+                    .group(byFamilyGroup);
+
+        // "SexCode",
             cf.gender = cf.dimension(function(d) { return d.SexCode; });
             var gender = cf.gender.group();
-            var gendercount = cf.gender.group().reduceCount(function(d) { return d.SexCode; });
+            var gendercount = cf.gender.group().reduceSum(function (d) { return d.cnt; });
 
-            gender_chart.width(100).height(100)
+            gender_chart.width(140).height(140)
                 .dimension(cf.gender)
                 .group(gendercount)
                 .on("filtered", getFiltersValues)
@@ -355,9 +366,9 @@
        //"IndividualAge","IndividualAge1",
             cf.age = cf.dimension(function(d) { return d.IndividualAge1; });
             var age = cf.age.group();
-            var agecount = cf.age.group().reduceCount(function(d) { return d.IndividualAge1; });
+            var agecount = cf.age.group().reduceSum(function (d) { return d.cnt; });
 
-            age_chart.width(100).height(100)
+            age_chart.width(140).height(140)
                 .dimension(cf.age)
                 .group(agecount)
                 .on("filtered", getFiltersValues)
@@ -367,9 +378,9 @@
        //"CaseSize","CaseSize1",
             cf.size = cf.dimension(function(d) { return d.CaseSize1; });
             var size = cf.size.group();
-            var sizecount = cf.size.group().reduceCount(function(d) { return d.CaseSize1; });
+            var sizecount = cf.size.group().reduceSum(function (d) { return d.cnt; });
 
-            size_chart.width(100).height(100)
+            size_chart.width(140).height(140)
                 .dimension(cf.size)
                 .group(sizecount)
                 .on("filtered", getFiltersValues)
@@ -379,9 +390,9 @@
        //"Recommended_for_cash_Assessment","Decision_for_cash_Assistance",
             cf.decision = cf.dimension(function(d) { return d.Decision; });
             var decision = cf.decision.group();
-            var decisioncount = cf.decision.group().reduceCount(function(d) { return d.Decision; });
+            var decisioncount = cf.decision.group().reduceSum(function (d) { return d.cnt; });
 
-            decision_chart.width(100).height(100)
+            decision_chart.width(140).height(140)
                 .dimension(cf.decision)
                 .group(decisioncount)
                 .on("filtered", getFiltersValues)
@@ -391,14 +402,14 @@
        //"Governoratename",
             cf.gov = cf.dimension(function(d) { return d.Governoratename; });
             var gov = cf.gov.group();
-            var govcount = cf.gov.group().reduceCount(function(d) { return d.Governoratename; });
+            var govcount = cf.gov.group().reduceSum(function (d) { return d.cnt; });
 
-            gov_chart.width(280).height(280)
+            gov_chart.width(480).height(380)
                 .dimension(cf.gov)
                 .group(govcount)
                 .elasticX(true)
                 .renderLabel(true)
-                .ordering(function (p) { return -p.value;})
+             //   .ordering(function (p) { return -p.value;})
                 .colors(['#3182bd'])
                 .colorDomain([0,0])
                 .colorAccessor(function(d, i){return 1;})
@@ -417,7 +428,10 @@
                 .transitionDuration(500)
                 .centerBar(false)
                 .gap(5)
-                .filter([1, 9])
+                .round(dc.round.floor)
+              //  .alwaysUseRounding(true)
+                .filter([2, 9])
+                .label(function (d) { return d.totalcostcl;})
                 .x(d3.scale.linear().domain([1, 9]))
                 .elasticY(true)
                 .on("filtered", getFiltersValues)
@@ -435,7 +449,8 @@
                 .transitionDuration(500)
                 .centerBar(true)
                 .gap(5)
-               // .filter([2, 8])
+                .filter([2, 9])
+                .label(function (d) { return d.totalincomecl;})
                 .x(d3.scale.linear().domain([1, 9]))
                 .elasticY(true)
                 .on("filtered", getFiltersValues)
